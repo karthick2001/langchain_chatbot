@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nvidia-llm-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nvidia-llm
+  template:
+    metadata:
+      labels:
+        app: nvidia-llm     # Label to match Fargate profile
+    spec:
+      containers:
+      - name: nvidia-llm
+        image: public.ecr.aws/u4i0c1o5/nvidiallm:latest  # Public ECR image
+        ports:
+        - containerPort: 8501
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nvidia-llm-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8501
+  selector:
+    app: nvidia-llm
