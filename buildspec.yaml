@@ -1,7 +1,7 @@
 version: 0.2
 
 phases:
-   install:
+  install:
     runtime-versions:
       python: 3.9
       docker: 20
@@ -10,26 +10,26 @@ phases:
       - yum update -y
       - pip install --upgrade pip
       - pip install -r requirements.txt
-    
-   pre_build:
+
+  pre_build:
     commands:
       - echo "Logging in to Amazon ECR..."
       - aws ecr get-login-password --region <aws-region> | docker login --username AWS --password-stdin <aws-account-id>.dkr.ecr.<aws-region>.amazonaws.com
       - echo "Preparing to build Docker image..."
 
-   build:
+  build:
     commands:
       - echo "Building the Docker image..."
-      - docker build -t docker build -t nvidiallm .
+      - docker build -t nvidiallm .
       - docker tag nvidiallm:latest public.ecr.aws/u4i0c1o5/nvidiallm:latest
 
-   post_build:
+  post_build:
     commands:
       - echo "Pushing the Docker image to Amazon ECR..."
       - docker push public.ecr.aws/u4i0c1o5/nvidiallm:latest
       - echo "Build and push completed successfully."
-  artifacts:
+
+artifacts:
   files:
     - "**/*"
   discard-paths: yes
-
